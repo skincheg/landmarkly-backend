@@ -93,18 +93,29 @@ app.post(
                 user.lastLogin = date
                 user.token = crypto.createHash('md5').update(salt).digest('hex')
                 await user.save()
-                return res.status(200).json({ user, errors: [] });
+                return res.status(200).json({user, errors: []});
             } else {
-                return res.status(400).json({ errors: [
+                return res.status(400).json({
+                    errors: [
                         {
                             "value": req.body.password,
                             "msg": "Неверный пароль",
                             "param": "password",
                             "location": "body"
                         },
-                    ] });
+                    ]
+                });
             }
         }
+
+        return res.status(400).json({ errors: [
+                {
+                    "value": "",
+                    "msg": "Пользователь не найден",
+                    "param": "password",
+                    "location": "body"
+                },
+            ] });
 
     }
 );
@@ -168,18 +179,6 @@ app.post(
 
 app.post(
     '/landmarks/buy',
-    body('landmarkId')
-        .matches(/^[0-9]+$/i)
-        .withMessage('Некорректный идентификатор, может состоять только из цифр'),
-    body('date')
-        .matches(/^[А-Яа-я0-9,: \-\.]+$/i)
-        .withMessage('Некорректная дата, может состоять только из букв и цифр'),
-    body('price')
-        .matches(/^[0-9]+$/i)
-        .withMessage('Некорректная цена, может состоять только из цифр'),
-    body('userId')
-        .matches(/^[0-9]+$/i)
-        .withMessage('Некорректная цена, может состоять только из цифр'),
     async (req, res) => {
         // Finds the validation errors in this request and wraps them in an object with handy functions
         const errors = validationResult(req);
@@ -191,7 +190,7 @@ app.post(
 
         Order.create({
             id: orderId,
-            landmarkId: req.body.name,
+            landmarkId: req.body.id,
             price: req.body.price,
             date: req.body.date,
             userId: req.body.userId,
