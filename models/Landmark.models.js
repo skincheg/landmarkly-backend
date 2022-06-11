@@ -21,6 +21,9 @@ const schema = new Schema({
         type: Number
     }, longitude: {
         type: Number
+    }, popular: {
+        type: Boolean,
+        default: false
     }
 })
 
